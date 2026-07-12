@@ -1,0 +1,53 @@
+# Forge backend dependencies
+# Core framework
+fastapi>=0.115.0
+uvicorn[standard]>=0.34.0
+pydantic>=2.10.0
+pydantic-settings>=2.7.0
+python-dotenv>=1.0.0
+
+# Database
+sqlalchemy[asyncio]>=2.0.36
+asyncpg>=0.30.0
+psycopg[binary]>=3.2.0
+alembic>=1.14.0
+pgvector>=0.3.0
+
+# LangGraph / LangChain
+langgraph>=0.4.0
+langgraph-checkpoint-postgres>=2.0.0
+langchain-openai>=0.3.0
+langchain-core>=0.3.0
+airllm>=3.0.1
+
+# HTTP client
+httpx>=0.28.0
+
+# Realtime
+supabase>=2.3.4
+
+# Logging
+structlog>=24.4.0
+
+# Testing
+pytest>=8.3.0
+pytest-asyncio>=0.25.0
+httpx  # also used as test client for FastAPI
+
+# Browser automation (Phase 3)
+playwright>=1.40.0
+Pillow>=10.0.0
+
+# MCP SDK
+mcp>=1.1.2
+
+# Docker SDK
+docker>=7.0.0
+
+# Docker SDK
+# docker>=7.0.0
+
+# Document Generation (Phase 4)
+python-docx>=1.1.0
+openpyxl>=3.1.2
+python-pptx>=0.6.23

@@ -1,0 +1,55 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: forge-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: forge
+    ports:
+      - "5433:5432"
+    volumes:
+      - forge_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d forge"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ../backend
+      dockerfile: ../docker/Dockerfile.api
+    container_name: forge-api
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:password@postgres:5432/forge
+      SYNC_DATABASE_URL: postgresql+psycopg://postgres:password@postgres:5432/forge
+      CHECKPOINT_DB_URI: postgresql://postgres:password@postgres:5432/forge
+      LLM_PROVIDER: ollama
+      LLM_BASE_URL: http://host.docker.internal:11434/v1
+      LLM_API_KEY: local-execution
+      LLM_MODEL_NAME: qwen2.5-coder:32b
+      EMBEDDING_MODEL_NAME: nomic-embed-text
+      VLLM_BASE_URL: http://host.docker.internal:11434/v1
+      VLLM_API_KEY: local-execution
+      VLLM_MODEL_NAME: qwen2.5-coder:32b
+      SUPABASE_URL: http://host.docker.internal:54321
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY:-}
+      WORKSPACE_ROOT: /workspaces
+    volumes:
+      - ../backend:/app
+      - ../backend/workspaces:/workspaces
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  forge_pgdata:
+    driver: local
